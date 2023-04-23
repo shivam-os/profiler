@@ -12,18 +12,7 @@ const ProfileSchema = new Schema({
     required: true,
   },
 
-  links: [
-    {
-      siteName: {
-        type: String,
-        required: true,
-      },
-      siteUrl: {
-        type: String,
-        required: true,
-      },
-    },
-  ],
+  links: [{ type: Schema.Types.ObjectId, ref: "Link" }],
 });
 
 module.exports = mongoose.model("Profile", ProfileSchema);

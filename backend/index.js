@@ -2,7 +2,9 @@ const express = require("express");
 const app = express();
 const morgan = require("morgan");
 const cors = require("cors");
-require("./config/db")
+const passport = require("passport")
+require("./config/db");
+require("./config/passport")(passport);
 const userRoutes = require("./routes/userRoutes");
 const profileRoutes = require("./routes/profileRoutes");
 const PORT = 3007;
