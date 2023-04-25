@@ -41,4 +41,7 @@ router.delete(
   profileController.deleteProfile
 );
 
+//POST request to create new url for profile with given id
+router.post("/:id/url")
+
 module.exports = router;
