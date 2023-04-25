@@ -20,10 +20,13 @@ import {
   IconButton,
   Menu,
   Divider,
+  useDisclosure,
 } from "@chakra-ui/react";
 import { SearchIcon, AddIcon, SettingsIcon, CopyIcon } from "@chakra-ui/icons";
-import { useContext } from "react";
+import { useContext, useRef } from "react";
 import UserContext from "../context/userContext";
+import ProfileForm from "./ProfileForm";
+import LinkForm from "./LinkForm";
 
 function CustomMenuButton() {
   return (
@@ -54,12 +57,13 @@ function ProfileLink() {
         <Heading>Github</Heading>
         <Text>https://github.com</Text>
       </Box>
-      <IconButton icon={<CopyIcon />} aria-label="Copy the link"/>
+      <IconButton icon={<CopyIcon />} aria-label="Copy the link" />
     </HStack>
   );
 }
 
-function ProfileCard() {
+function ProfileCard(props) {
+  const { isOpen: isLinkOpen, onOpen: onLinkOpen, onClose: onLinkClose } = useDisclosure();
   return (
     <Card w="100%">
       <CardHeader>
@@ -81,12 +85,22 @@ function ProfileCard() {
         <ProfileLink />
         <ProfileLink />
       </CardBody>
+      <CardFooter>
+        <Button leftIcon={<AddIcon />} size="lg" colorScheme="facebook" onClick={onLinkOpen}>
+          Add Link
+        </Button>
+        <LinkForm isLinkOpen={isLinkOpen} onLinkOpen={onLinkClose} onLinkClose={onLinkClose}/>
+      </CardFooter>
     </Card>
   );
 }
 
 export default function Dashboard() {
   const { user } = useContext(UserContext);
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const finalRef = useRef(null);
+
+
   return (
     <VStack w="90%" spacing="2rem">
       <InputGroup>
@@ -100,9 +114,16 @@ export default function Dashboard() {
           size="lg"
         />
       </InputGroup>
-      <Button leftIcon={<AddIcon />} w="100%" size="lg" colorScheme="facebook">
+      <Button
+        leftIcon={<AddIcon />}
+        w="100%"
+        size="lg"
+        colorScheme="facebook"
+        onClick={onOpen}
+      >
         Add New Profile
       </Button>
+      <ProfileForm isOpen={isOpen} onOpen={onOpen} onClose={onClose} finalRef={finalRef}/>
       <ProfileCard />
       <ProfileCard />
       <ProfileCard />

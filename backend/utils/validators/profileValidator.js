@@ -16,21 +16,14 @@ exports.createProfile = [
       "Name field cannot contain any numbers or special characters!"
     ),
 
-  body("image")
+  body("about")
     .trim()
     .not()
     .isEmpty()
-    .withMessage("Image field cannot be empty!"),
-
-  body("links.siteName")
-    .trim()
-    .not()
-    .isEmpty()
-    .withMessage("Image field cannot be empty!"),
-
-  body("links.siteUrl")
-    .trim()
-    .not()
-    .isEmpty()
-    .withMessage("Image field cannot be empty!"),
+    .withMessage("About field cannot be empty!")
+    .isLength({ min: 3, max: 100 })
+    .withMessage(
+      "Name field must contain minimum 3 letters and maximum 100 letters!"
+    )
 ];
+

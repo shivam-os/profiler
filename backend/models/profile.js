@@ -6,8 +6,8 @@ const ProfileSchema = new Schema({
     type: String,
     required: true,
   },
-
-  image: {
+  
+  about: {
     type: String,
     required: true,
   },
