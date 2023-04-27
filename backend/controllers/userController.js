@@ -83,7 +83,7 @@ exports.login = async (req, res) => {
       payload,
       process.env.ACCESS_TOKEN_SECRET,
       {
-        expiresIn: "3h",
+        expiresIn: "1d",
       }
     );
 

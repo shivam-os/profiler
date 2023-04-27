@@ -11,17 +11,17 @@ import {
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { userLoginSchema } from "../utils/userValidator";
-import { useToast } from "@chakra-ui/react";
 import { NavLink } from "react-router-dom";
 import { useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { loginUser } from "../api/authCalls";
 import UserContext from "../context/userContext";
 import { saveUser } from "../utils/storageHelper";
+import ToastContext from "../context/toastContext";
 
 export default function Login() {
-  const toast = useToast();
-  const {setUser } = useContext(UserContext);
+  const { showToast } = useContext(ToastContext);
+  const { setUser } = useContext(UserContext);
   const navigate = useNavigate();
 
   const {
@@ -30,41 +30,20 @@ export default function Login() {
     formState: { errors },
   } = useForm({ resolver: yupResolver(userLoginSchema) });
 
-  const showToast = (msg, status) => {
-    toast({
-      description: msg,
-      status: status,
-      duration: 9000,
-      isClosable: true,
-    });
-  };
-
   const handleLoginSubmit = async (data) => {
     try {
       const response = await loginUser(data);
-      console.log("data", response);
-      switch (response.status) {
-        case 200:
-          showToast(response.data.msg, "success");
-          const userData = {
-            token: response.data.token,
-            name: response.data.name,
-          };
-          setUser(userData);
-          saveUser(userData);
-          navigate("/dashboard");
-          break;
-        case 404:
-          showToast(response.data.err, "error");
-          break;
-        case 500:
-          showToast(response.data.err, "error");
-          break;
-        default:
-          showToast("Login failed!", "error");
-      }
+      showToast(response.data.msg, "success");
+      const userData = {
+        token: response.data.token,
+        name: response.data.name,
+      };
+      setUser(userData);
+      saveUser(userData);
+      navigate("/dashboard");
     } catch (err) {
       console.log(err);
+      showToast(err.response.data.err, "error");
     }
   };
 

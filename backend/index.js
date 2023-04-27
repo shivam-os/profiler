@@ -10,9 +10,9 @@ const profileRoutes = require("./routes/profileRoutes");
 const PORT = 3007;
 
 //Required Middlewares
+app.use(cors());
 app.use(express.json());
 app.use(morgan("dev"));
-app.use(cors());
 
 //App routes
 app.use("/api/users", userRoutes);

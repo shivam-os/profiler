@@ -21,7 +21,7 @@ const UserSchema = new Schema({
   profiles: [
     {
       type: Schema.Types.ObjectId,
-      ref: "User",
+      ref: "Profile",
     },
   ],
 });

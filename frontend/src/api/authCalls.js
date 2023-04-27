@@ -12,11 +12,13 @@ export const registerUser = async (userData) => {
 
 //Make login request to the server
 export const loginUser = async (userData) => {
-  try {
-    const response = await api.post("/users/login", userData);
-    return response;
-  } catch (err) {
-    console.log(err);
-    return err.response;
-  }
+  const response = await api.post("/users/login", userData);
+  return response
+  // try {
+  //   const response = await api.post("/users/login", userData);
+  //   return response;
+  // } catch (err) {
+  //   console.log(err);
+  //   return err.response;
+  // }
 };

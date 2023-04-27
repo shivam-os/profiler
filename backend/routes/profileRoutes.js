@@ -42,25 +42,9 @@ router.delete(
   profileController.deleteProfile
 );
 
-//POST request to create new url for profile with given id
-router.post(
-  "/:id/links",
-  passport.authenticate("jwt", { session: false }),
-  linkValidator.createLink,
-  profileController.createProfileLink
-);
-
-//PUT request to update the existing link
-router.put(
-  "/links/:linkId",
-  passport.authenticate("jwt", { session: false }),
-  linkValidator.createLink,
-  profileController.updateProfileLink
-);
-
-//DELETE request to update the existing link
+//DELETE request to delete a link with given id
 router.delete(
-  "/links/:linkId",
+  "/links/:id",
   passport.authenticate("jwt", { session: false }),
   profileController.deleteProfileLink
 );
