@@ -3,30 +3,6 @@ const Profile = require("../models/profile");
 const Link = require("../models/link");
 const handleErrors = require("../utils/validators/handleErrors");
 
-const createLinks = async (profile, siteName, siteUrl) => {
-  //Create the link
-  const createdLink = await Link.create({
-    siteName: siteName,
-    siteUrl: siteUrl,
-  });
-
-  //Save the link in the profile
-  profile.links.push(createdLink);
-  profile.save();
-};
-
-const ifProfileExists = async (id) => {
-  try {
-    const existingProfile = await Profile.findById(id);
-    if (existingProfile) {
-      return existingProfile;
-    }
-  } catch (err) {
-    console.log(err);
-  }
-  return null;
-};
-
 //GET method to get all profiles created by the user
 exports.getAllProfiles = async (req, res) => {
   try {
@@ -59,7 +35,7 @@ exports.getAllProfiles = async (req, res) => {
 //GET method to get single profile created by the user
 exports.getSingleProfile = async (req, res) => {
   try {
-    const existingProfile = await ifProfileExists(req.params.id);
+    const existingProfile = Profile.findById(req.params.id);
 
     //If profile with given id does not exists
     if (!existingProfile) {
@@ -83,11 +59,9 @@ exports.createProfile = async (req, res) => {
   handleErrors(req, res);
   try {
     const { name, about, sites } = req.body;
-    console.log("sites", sites);
 
     //Create the profile
     const createdProfile = await Profile.create({ name, about });
-    console.log("Data", req.user);
 
     //Save the created profile id to User
     req.user.profiles.push(createdProfile);
@@ -95,8 +69,7 @@ exports.createProfile = async (req, res) => {
 
     //Create the links
     for (let i = 0; i < sites.length; i++) {
-      console.log(i);
-      //Create the link
+
       const createdLink = await Link.create({
         siteName: sites[i].siteName,
         siteUrl: sites[i].siteUrl,
@@ -106,7 +79,6 @@ exports.createProfile = async (req, res) => {
       createdProfile.links.push(createdLink);
     }
     createdProfile.save();
-    // sites.forEach(createLinks(createdProfile, item.siteName, item.siteUrl));
 
     return res
       .status(201)
@@ -126,7 +98,7 @@ exports.updateProfile = async (req, res) => {
   try {
     const { name, about, sites } = req.body;
 
-    const existingProfile = await ifProfileExists(req.params.id);
+    const existingProfile = await Profile.findById(req.params.id);
 
     //If profile with given id does not exists
     if (!existingProfile) {
@@ -137,21 +109,22 @@ exports.updateProfile = async (req, res) => {
 
     //Update the profile
     await existingProfile.updateOne({ name, about });
-    console.log(existingProfile)
 
-    //Update the links which already exist
+    //Handle links
     for (let i = 0; i < sites.length; i++) {
+
+      //If link has id, then find it and update the data
       if (sites[i]._id) {
         await Link.findByIdAndUpdate(sites[i]._id, {
           siteName: sites[i].siteName,
           siteUrl: sites[i].siteUrl,
         });
       } else {
+        //If link does not has the id, then create new link
         const newLink = await Link.create({
           siteName: sites[i].siteName,
           siteUrl: sites[i].siteUrl,
         });
-        console.log(newLink)
         existingProfile.links.push(newLink);
       }
     }
@@ -170,7 +143,7 @@ exports.updateProfile = async (req, res) => {
 //DELETE method to delete a profile with given id
 exports.deleteProfile = async (req, res) => {
   try {
-    const existingProfile = await ifProfileExists(req.params.id);
+    const existingProfile = await Profile.findById(req.params.id);
 
     //If profile with given id does not exists
     if (!existingProfile) {
@@ -190,35 +163,6 @@ exports.deleteProfile = async (req, res) => {
     await Profile.findByIdAndDelete(req.params.id);
 
     return res.status(200).json({ msg: "Profile deleted successfully!" });
-  } catch (err) {
-    console.log(err);
-    return res
-      .status(500)
-      .json({ err: "Something has went wrong. Please try again later!" });
-  }
-};
-
-//PUT method to update a link for profile with given id
-exports.updateProfileLink = async (req, res) => {
-  //Handle errors coming from the link validator
-  handleErrors(req, res);
-  try {
-    const { siteName, siteUrl } = req.body;
-
-    //Find and update the link with given id
-    const existingLink = await Link.findByIdAndUpdate(req.params.linkId, {
-      siteName,
-      siteUrl,
-    });
-
-    //If link with given id does not exists
-    if (!existingLink) {
-      return res.status(400).json({
-        err: "Link with given id does not exist! Recheck it and try again!",
-      });
-    }
-
-    return res.status(200).json({ msg: "Link updated successfully!" });
   } catch (err) {
     console.log(err);
     return res

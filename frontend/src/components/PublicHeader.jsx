@@ -9,7 +9,7 @@ export default function PublicHeader() {
   const navigate = useNavigate();
 
   return (
-    <HStack w="100%" justifyContent="space-between" p="1rem">
+    <HStack w="100%" justifyContent="space-between" p="1rem" mb="10rem">
       <Heading as={NavLink} to="/">
         Profiler
       </Heading>

@@ -90,7 +90,6 @@ exports.login = async (req, res) => {
     return res.status(200).json({
       token: bearerToken,
       name: existingUser.name,
-      userId: existingUser._id,
       msg: `Welcome back ${existingUser.name}! You are now logged in.`,
     });
   } catch (err) {

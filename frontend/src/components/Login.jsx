@@ -48,7 +48,7 @@ export default function Login() {
   };
 
   return (
-    <VStack spacing="2rem" p="3rem" boxShadow="lg">
+    <VStack spacing="2rem" p="3rem" boxShadow="lg" maxWidth="70%" m="auto">
       <Heading>Login</Heading>
       <Text>
         New here?{" "}

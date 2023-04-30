@@ -1,4 +1,4 @@
-import { VStack } from "@chakra-ui/react";
+import { Box, VStack } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 import { useContext, useEffect } from "react";
 import UserContext from "./context/userContext";
@@ -36,15 +36,11 @@ function App() {
   }, [user]);
 
   return (
-    <div className="App">
-      <VStack
-        maxWidth={{ base: "100%", "2xl": "80%" }}
-        justifyContent="space-between"
-        h="100vh"
+      <Box
+        maxWidth={{ base: "100%", "2xl": "80%" }} m="auto"
       >
         <AppRoutes />
-      </VStack>
-    </div>
+      </Box>
   );
 }
 

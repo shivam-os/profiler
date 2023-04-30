@@ -40,7 +40,7 @@ export default function Register() {
   };
 
   return (
-    <VStack spacing="2rem" p="3rem" boxShadow="lg" maxWidth="70%">
+    <VStack spacing="2rem" p="3rem" boxShadow="lg" maxWidth="70%" m="auto">
       <Heading>Register</Heading>
       <Text>
         Already registered?{" "}

@@ -16,7 +16,7 @@ module.exports = (passport) => {
         //Check if user with userId exists in the database
         const existingUser = await User.findOne({ _id: jwt_payload.userId }, {password: 0});
 
-        //If it exists, then send the userId else return false
+        //If it exists, then send the user else return false
         if (existingUser) {
           return done(null, existingUser);
         } else {
