@@ -1,39 +1,42 @@
-import { Box, VStack } from "@chakra-ui/react";
+import { Box } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 import { useContext, useEffect } from "react";
 import UserContext from "./context/userContext";
 import { loadUser } from "./utils/storageHelper";
 import AppRoutes from "./components/AppRoutes";
 import { getAllProfiles, setToken } from "./api/profileCalls";
+import { ProfileContext } from "./context/profileContext";
+import useAxios from "./useAxios";
 
 function App() {
-  const { user, setUser, setProfiles, profiles } = useContext(UserContext);
+  const { user, setUser } = useContext(UserContext);
+  // const {profiles, setProfiles} = useContext(ProfileContext);
   const navigate = useNavigate();
+  const api = useAxios();
 
-  useEffect(() => {
-    const loggedUser = loadUser();
+  //If item exists in localStorage & token is valid, send to dashboard
+  // useEffect(() => {
+  //   const loggedUser = loadUser();
 
-    if (loggedUser) {
-      setUser(loggedUser);
-      setToken(loggedUser.token);
-      navigate("/dashboard");
-    }
-  }, []);
+  //   if (loggedUser) {
+  //     setUser(loggedUser);
+  //     setToken(loggedUser.token);
+  //     navigate("/dashboard");
+  //   }
+  // }, []);
 
   useEffect(() => {
     const fetchAllProfiles = async () => {
       try {
-        const response = await getAllProfiles();
-        setProfiles(response.data.userProfiles.profiles);
+        const response = await api.get("/profiles")
+        // setProfiles(response.data.userProfiles.profiles);
       } catch (err) {
         console.log(err);
       }
     };
 
-    if (user) {
-      fetchAllProfiles();
-    }
-  }, [user]);
+    fetchAllProfiles()
+  }, []);
 
   return (
       <Box

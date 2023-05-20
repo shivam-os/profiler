@@ -1,7 +1,8 @@
 const User = require("../models/user");
 const Profile = require("../models/profile");
 const Link = require("../models/link");
-const handleErrors = require("../utils/validators/handleErrors");
+const httpResponses = require("../utils/httpResponses");
+const responseObj = "Profile"
 
 //GET method to get all profiles created by the user
 exports.getAllProfiles = async (req, res) => {
@@ -26,9 +27,7 @@ exports.getAllProfiles = async (req, res) => {
     return res.status(200).json({ userProfiles });
   } catch (err) {
     console.log(err);
-    return res
-      .status(500)
-      .json({ err: "Something has went wrong. Please try again later!" });
+    return httpResponses.serverError(res);
   }
 };
 
@@ -39,24 +38,22 @@ exports.getSingleProfile = async (req, res) => {
 
     //If profile with given id does not exists
     if (!existingProfile) {
-      return res.status(404).json({
-        err: "Profile with given id does not exist. Recheck the id and try again!",
-      });
+      return httpResponses.notFoundError(res, responseObj)
     }
 
     return res.status(200).json(await existingProfile.populate("links"));
   } catch (err) {
     console.log(err);
-    return res
-      .status(500)
-      .json({ err: "Something has went wrong. Please try again later!" });
+    return httpResponses.serverError(res);
   }
 };
 
 //POST method to create a new profile
 exports.createProfile = async (req, res) => {
   //Handle errors coming from the create profile validator
-  handleErrors(req, res);
+  if (httpResponses.validationError(req, res)) {
+    return 
+  }
   try {
     const { name, about, sites } = req.body;
 
@@ -69,7 +66,6 @@ exports.createProfile = async (req, res) => {
 
     //Create the links
     for (let i = 0; i < sites.length; i++) {
-
       const createdLink = await Link.create({
         siteName: sites[i].siteName,
         siteUrl: sites[i].siteUrl,
@@ -80,21 +76,19 @@ exports.createProfile = async (req, res) => {
     }
     createdProfile.save();
 
-    return res
-      .status(201)
-      .json({ msg: "Profile created successfully!", createdProfile });
+    return httpResponses.createdResponse(res, responseObj)
   } catch (err) {
     console.log(err);
-    return res
-      .status(500)
-      .json({ err: "Something has went wrong. Please try again later!" });
+    return httpResponses.serverError(res);
   }
 };
 
 //PUT method to update a profile with given id
 exports.updateProfile = async (req, res) => {
   //Handle errors coming from the create profile validator
-  handleErrors(req, res);
+  if (httpResponses.validationError(req, res)) {
+    return 
+  }
   try {
     const { name, about, sites } = req.body;
 
@@ -102,9 +96,7 @@ exports.updateProfile = async (req, res) => {
 
     //If profile with given id does not exists
     if (!existingProfile) {
-      return res.status(404).json({
-        err: "Profile with given id does not exist. Recheck the id and try again!",
-      });
+      return httpResponses.notFoundError(res, responseObj)
     }
 
     //Update the profile
@@ -112,7 +104,6 @@ exports.updateProfile = async (req, res) => {
 
     //Handle links
     for (let i = 0; i < sites.length; i++) {
-
       //If link has id, then find it and update the data
       if (sites[i]._id) {
         await Link.findByIdAndUpdate(sites[i]._id, {
@@ -129,14 +120,12 @@ exports.updateProfile = async (req, res) => {
       }
     }
 
-    existingProfile.save()
+    existingProfile.save();
 
-    return res.status(200).json({ msg: "Profile updated successfully!" });
+    return httpResponses.updatedResponse(req, responseObj)
   } catch (err) {
     console.log(err);
-    return res
-      .status(500)
-      .json({ err: "Something has went wrong. Please try again later!" });
+    return httpResponses.serverError(res)
   }
 };
 
@@ -147,27 +136,23 @@ exports.deleteProfile = async (req, res) => {
 
     //If profile with given id does not exists
     if (!existingProfile) {
-      return res.status(404).json({
-        err: "Profile with given id does not exist. Recheck the id and try again!",
-      });
+      return httpResponses.notFoundError(res, responseObj)
     }
 
     const { links } = existingProfile;
 
     for (let i = 0; i < links.length; i++) {
       //Find and delete the link with given id
-      const existingLink = await Link.findOneAndDelete(links[i]._id);
+      await Link.findOneAndDelete(links[i]._id);
     }
 
     //Delete the profile
     await Profile.findByIdAndDelete(req.params.id);
 
-    return res.status(200).json({ msg: "Profile deleted successfully!" });
+    return httpResponses.deletedResponse(res, responseObj)
   } catch (err) {
     console.log(err);
-    return res
-      .status(500)
-      .json({ err: "Something has went wrong. Please try again later!" });
+    return httpResponses.serverError(res);
   }
 };
 
@@ -178,16 +163,12 @@ exports.deleteProfileLink = async (req, res) => {
 
     //If link not found
     if (!deletedLink) {
-      return res.status(400).json({
-        err: "Link with given id not found. Recheck the id and try again!",
-      });
+      return httpResponses.notFoundError(res, "Link")
     }
 
-    return res.status(200).json({ msg: "Link deleted successfully!" });
+    return httpResponses.deletedResponse(res, "Link")
   } catch (err) {
     console.log(err);
-    return res
-      .status(500)
-      .json({ err: "Something has went wrong. Please try again later!" });
+    return httpResponses.serverError(res)
   }
 };

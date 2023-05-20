@@ -35,7 +35,6 @@ export default function Login() {
       const response = await loginUser(data);
       showToast(response.data.msg, "success");
       const userData = {
-        token: response.data.token,
         name: response.data.name,
       };
       setUser(userData);

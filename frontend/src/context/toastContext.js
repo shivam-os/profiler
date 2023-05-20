@@ -3,7 +3,7 @@ import { createContext } from "react";
 
 const ToastContext = createContext(null);
 
-export const ToastContextProvider = ({ children }) => {
+export function ToastContextProvider({ children }) {
   const toast = useToast();
 
   const showToast = (msg, status) => {
@@ -20,6 +20,6 @@ export const ToastContextProvider = ({ children }) => {
       {children}
     </ToastContext.Provider>
   );
-};
+}
 
 export default ToastContext;

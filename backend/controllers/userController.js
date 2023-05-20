@@ -2,7 +2,8 @@ const User = require("../models/user");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
-const handleErrors = require("../utils/validators/handleErrors");
+const httpResponses = require("../utils/httpResponses");
+const responseObj = "User";
 
 //Check if user with given email already exists
 const ifUserExists = async (email) => {
@@ -20,15 +21,16 @@ const ifUserExists = async (email) => {
 //POST method to register a new user
 exports.register = async (req, res) => {
   //Handle errors coming from the user register validator
-  handleErrors(req, res);
+  if (httpResponses.validationError(req, res)) {
+    return 
+  }
+
   try {
     const { name, email, password } = req.body;
 
     //Check if user with given email already exists
     if (await ifUserExists(email)) {
-      return res
-        .status(403)
-        .json({ err: "User with given email already exists. Try login!" });
+      return httpResponses.existsError(res, responseObj);
     }
 
     //Hash the password
@@ -41,28 +43,26 @@ exports.register = async (req, res) => {
       password: hashedPassword,
     });
 
-    return res.status(201).json({ msg: "User created successfully!" });
+    return httpResponses.createdResponse(res, responseObj)
   } catch (err) {
     console.log(err);
-    return res
-      .status(500)
-      .json({ err: "Something has went wrong. Please try again later!" });
+    return httpResponses.serverError(res)
   }
 };
 
 //POST method to login a new user
 exports.login = async (req, res) => {
   //Handle errors coming from the user login validator
-  handleErrors(req, res);
+  if (httpResponses.validationError(req, res)) {
+    return 
+  }
   try {
     const { email, password } = req.body;
     const existingUser = await ifUserExists(email);
 
     //Check if email with given user exists
     if (!existingUser) {
-      return res
-        .status(404)
-        .json({ err: "User with given email does not exist. Try register!" });
+      return httpResponses.notFoundError(res, responseObj)
     }
 
     const passwordMatched = await bcrypt.compare(
@@ -94,8 +94,6 @@ exports.login = async (req, res) => {
     });
   } catch (err) {
     console.log(err);
-    return res
-      .status(500)
-      .json({ err: "Something has went wrong. Please try again later!" });
+    return httpResponses.serverError(res);
   }
 };

@@ -3,6 +3,7 @@ const app = express();
 const morgan = require("morgan");
 const cors = require("cors");
 const passport = require("passport")
+const cookieParser = require("cookie-parser");
 require("dotenv").config()
 require("./config/db");
 require("./config/passport")(passport);
@@ -17,6 +18,7 @@ app.use(cors({
 }));
 app.use(express.json());
 app.use(morgan("dev"));
+app.use(cookieParser());
 
 //App routes
 app.use("/api/users", userRoutes);
