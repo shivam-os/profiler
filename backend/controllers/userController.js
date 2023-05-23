@@ -3,6 +3,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
 const httpResponses = require("../utils/httpResponses");
+const tokenValidity = 1 * 60 * 60 * 1000; //1 day
 const responseObj = "User";
 
 //Check if user with given email already exists
@@ -22,7 +23,7 @@ const ifUserExists = async (email) => {
 exports.register = async (req, res) => {
   //Handle errors coming from the user register validator
   if (httpResponses.validationError(req, res)) {
-    return 
+    return;
   }
 
   try {
@@ -43,10 +44,10 @@ exports.register = async (req, res) => {
       password: hashedPassword,
     });
 
-    return httpResponses.createdResponse(res, responseObj)
+    return httpResponses.createdResponse(res, responseObj);
   } catch (err) {
     console.log(err);
-    return httpResponses.serverError(res)
+    return httpResponses.serverError(res);
   }
 };
 
@@ -54,7 +55,7 @@ exports.register = async (req, res) => {
 exports.login = async (req, res) => {
   //Handle errors coming from the user login validator
   if (httpResponses.validationError(req, res)) {
-    return 
+    return;
   }
   try {
     const { email, password } = req.body;
@@ -62,7 +63,7 @@ exports.login = async (req, res) => {
 
     //Check if email with given user exists
     if (!existingUser) {
-      return httpResponses.notFoundError(res, responseObj)
+      return httpResponses.notFoundError(res, responseObj);
     }
 
     const passwordMatched = await bcrypt.compare(
@@ -83,15 +84,20 @@ exports.login = async (req, res) => {
       payload,
       process.env.ACCESS_TOKEN_SECRET,
       {
-        expiresIn: "1d",
+        expiresIn: `${tokenValidity}`,
       }
     );
 
-    return res.status(200).json({
-      token: bearerToken,
-      name: existingUser.name,
-      msg: `Welcome back ${existingUser.name}! You are now logged in.`,
-    });
+    return res
+      .cookie("token", bearerToken, {
+        expires: new Date(Date.now() + tokenValidity),
+      })
+      .status(200)
+      .json({
+        token: bearerToken,
+        name: existingUser.name,
+        msg: `Welcome back ${existingUser.name}! You are now logged in.`,
+      });
   } catch (err) {
     console.log(err);
     return httpResponses.serverError(res);

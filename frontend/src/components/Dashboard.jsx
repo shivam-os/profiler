@@ -19,6 +19,7 @@ import {
   IconButton,
   Menu,
   Divider,
+  useToast,
 } from "@chakra-ui/react";
 import {
   SearchIcon,
@@ -27,11 +28,13 @@ import {
   CopyIcon,
   CalendarIcon,
 } from "@chakra-ui/icons";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import UserContext from "../context/userContext";
 import { deleteProfile } from "../api/profileCalls";
-import ToastContext from "../context/toastContext";
 import { NavLink, useNavigate } from "react-router-dom";
+import { ProfileContext } from "../context/profileContext";
+import api from "../api/serverData";
+import displayToast from "../utils/toastHelper";
 
 function CustomMenuButton(props) {
   const { handleDelete, handleEdit } = props;
@@ -70,18 +73,18 @@ function ProfileLink(props) {
 
 function ProfileCard(props) {
   const { name, about, links, id } = props;
-  const { showToast } = useContext(ToastContext);
-  const { setProfiles, profiles } = useContext(UserContext);
+  const toast = useToast();
+  const { setProfiles, profiles } = useContext(ProfileContext);
   const navigate = useNavigate();
 
   const handleDelete = async (id) => {
     try {
       const response = await deleteProfile(id);
-      showToast(response.data.msg, "success");
+      displayToast(toast, response.data.msg, "success");
       setProfiles(profiles.filter((item) => item._id !== id));
     } catch (err) {
       console.log(err);
-      showToast(err.response.data.err, "error");
+      displayToast(toast, err.response.data.err, "error");
     }
   };
 
@@ -119,13 +122,14 @@ function ProfileCard(props) {
   );
 }
 
-function ProfileList() {
-  const { profiles } = useContext(UserContext);
-
-  console.log("profiles", profiles);
+function ProfileList(props) {
+  const { profiles } = useContext(ProfileContext);
+  const { searchResults } = props;
+  const list = searchResults === [] ? searchResults : profiles;
+  console.log(list);
   return (
     <>
-      {profiles?.map((item) => {
+      {list.map((item) => {
         return (
           <ProfileCard
             key={item._id}
@@ -141,12 +145,36 @@ function ProfileList() {
 }
 
 export default function Dashboard() {
-  const { searchBoxValue, setSearchBoxValue } = useState("");
-  const { searchedProfiles, setSearchedProfiles } = useState();
+  const [search, setSearch] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
+  const { profiles } = useContext(ProfileContext);
+
+  // useEffect(() => {
+  //   const fetchAllProfiles = async () => {
+  //     try {
+  //       const response = await api.get("/profiles");
+  //       console.log(response);
+  //       setProfiles(response.data.userProfiles.profiles);
+  //     } catch (err) {
+  //       console.log(err);
+  //     }
+  //   };
+
+  //   fetchAllProfiles();
+  // }, []);
 
   const handleSearchBox = (e) => {
-    setSearchBoxValue(e.target.value);
+    setSearch(e.target.value);
   };
+
+  useEffect(() => {
+    console.log(search);
+    setSearchResults(
+      profiles.filter((item) =>
+        item.name.toLowerCase().includes(search.trim().toLowerCase())
+      )
+    );
+  }, [search]);
 
   return (
     <VStack w="90%" spacing="2rem">
@@ -159,7 +187,7 @@ export default function Dashboard() {
           type="text"
           placeholder="Search profile name"
           size="lg"
-          value={searchBoxValue}
+          value={search}
           onChange={(e) => handleSearchBox(e)}
         />
       </InputGroup>
@@ -173,7 +201,7 @@ export default function Dashboard() {
       >
         Add New Profile
       </Button>
-      <ProfileList />
+      <ProfileList searchResults={searchResults} />
     </VStack>
   );
 }

@@ -2,7 +2,7 @@ const User = require("../models/user");
 const Profile = require("../models/profile");
 const Link = require("../models/link");
 const httpResponses = require("../utils/httpResponses");
-const responseObj = "Profile"
+const responseObj = "Profile";
 
 //GET method to get all profiles created by the user
 exports.getAllProfiles = async (req, res) => {
@@ -38,7 +38,7 @@ exports.getSingleProfile = async (req, res) => {
 
     //If profile with given id does not exists
     if (!existingProfile) {
-      return httpResponses.notFoundError(res, responseObj)
+      return httpResponses.notFoundError(res, responseObj);
     }
 
     return res.status(200).json(await existingProfile.populate("links"));
@@ -52,7 +52,7 @@ exports.getSingleProfile = async (req, res) => {
 exports.createProfile = async (req, res) => {
   //Handle errors coming from the create profile validator
   if (httpResponses.validationError(req, res)) {
-    return 
+    return;
   }
   try {
     const { name, about, sites } = req.body;
@@ -76,7 +76,10 @@ exports.createProfile = async (req, res) => {
     }
     createdProfile.save();
 
-    return httpResponses.createdResponse(res, responseObj)
+    return res.json({
+      createdProfile,
+      msg: "Profile created successfully!",
+    });
   } catch (err) {
     console.log(err);
     return httpResponses.serverError(res);
@@ -87,7 +90,7 @@ exports.createProfile = async (req, res) => {
 exports.updateProfile = async (req, res) => {
   //Handle errors coming from the create profile validator
   if (httpResponses.validationError(req, res)) {
-    return 
+    return;
   }
   try {
     const { name, about, sites } = req.body;
@@ -96,7 +99,7 @@ exports.updateProfile = async (req, res) => {
 
     //If profile with given id does not exists
     if (!existingProfile) {
-      return httpResponses.notFoundError(res, responseObj)
+      return httpResponses.notFoundError(res, responseObj);
     }
 
     //Update the profile
@@ -122,10 +125,13 @@ exports.updateProfile = async (req, res) => {
 
     existingProfile.save();
 
-    return httpResponses.updatedResponse(req, responseObj)
+    return res.json({
+      createdProfile: await existingProfile.populate("links"),
+      msg: "Profile updated successfully!",
+    });
   } catch (err) {
     console.log(err);
-    return httpResponses.serverError(res)
+    return httpResponses.serverError(res);
   }
 };
 
@@ -136,7 +142,7 @@ exports.deleteProfile = async (req, res) => {
 
     //If profile with given id does not exists
     if (!existingProfile) {
-      return httpResponses.notFoundError(res, responseObj)
+      return httpResponses.notFoundError(res, responseObj);
     }
 
     const { links } = existingProfile;
@@ -149,7 +155,7 @@ exports.deleteProfile = async (req, res) => {
     //Delete the profile
     await Profile.findByIdAndDelete(req.params.id);
 
-    return httpResponses.deletedResponse(res, responseObj)
+    return httpResponses.deletedResponse(res, responseObj);
   } catch (err) {
     console.log(err);
     return httpResponses.serverError(res);
@@ -163,12 +169,12 @@ exports.deleteProfileLink = async (req, res) => {
 
     //If link not found
     if (!deletedLink) {
-      return httpResponses.notFoundError(res, "Link")
+      return httpResponses.notFoundError(res, "Link");
     }
 
-    return httpResponses.deletedResponse(res, "Link")
+    return httpResponses.deletedResponse(res, "Link");
   } catch (err) {
     console.log(err);
-    return httpResponses.serverError(res)
+    return httpResponses.serverError(res);
   }
 };

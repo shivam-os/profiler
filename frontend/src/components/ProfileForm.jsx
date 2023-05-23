@@ -8,16 +8,17 @@ import {
   VStack,
   Heading,
   Text,
-  Center
+  Center,
+  useToast
 } from "@chakra-ui/react";
 import { newProfileSchema } from "../utils/profileValidator";
 import { useFieldArray, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { createProfile } from "../api/profileCalls";
 import { useContext } from "react";
-import UserContext from "../context/userContext";
 import { NavLink, useNavigate } from "react-router-dom";
-import ToastContext from "../context/toastContext";
+import { ProfileContext } from "../context/profileContext";
+import displayToast from "../utils/toastHelper";
 
 function Linkform(props) {
   const { register, control, errors } = props;
@@ -71,8 +72,8 @@ function Linkform(props) {
 }
 
 export default function ProfileForm(props) {
-  const { setProfiles, profiles } = useContext(UserContext);
-  const { showToast } = useContext(ToastContext);
+  const { setProfiles, profiles } = useContext(ProfileContext);
+  const toast = useToast();
   const navigate = useNavigate()
 
   const {
@@ -86,12 +87,14 @@ export default function ProfileForm(props) {
     try {
       const response = await createProfile(data);
       console.log("data", data);
-      showToast(response.data.msg, "success");
+      console.log(response)
+      displayToast(toast, response.data.msg, "success")
+      // showToast();
       setProfiles([...profiles, response.data.createdProfile]);
       navigate("/dashboard")
     } catch (err) {
       console.log(err);
-      showToast(err.response.data.err, "error");
+      displayToast(toast, err.response.data.err, "error");
     }
   };
 

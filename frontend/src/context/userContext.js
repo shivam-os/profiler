@@ -4,10 +4,10 @@ import { useState, createContext } from "react";
 const UserContext = createContext(null);
 
 export function UserContextProvider({ children }) {
-  const [user, setUser] = useState(null);
+  const [loggedIn, setLoggedIn] = useState(true);
 
   return (
-    <UserContext.Provider value={{ user, setUser }}>
+    <UserContext.Provider value={{ loggedIn, setLoggedIn }}>
       {children}
     </UserContext.Provider>
   );

@@ -9,15 +9,22 @@ import {
   Heading,
   Text,
   Center,
+  useToast,
 } from "@chakra-ui/react";
 import { newProfileSchema } from "../utils/profileValidator";
 import { useFieldArray, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { createProfile, deleteLink, getSingleProfile, updateProfile } from "../api/profileCalls";
+import {
+  createProfile,
+  deleteLink,
+  getSingleProfile,
+  updateProfile,
+} from "../api/profileCalls";
 import { useContext, useEffect, useState } from "react";
 import UserContext from "../context/userContext";
 import { NavLink, useNavigate, useParams } from "react-router-dom";
-import ToastContext from "../context/toastContext";
+import { ProfileContext } from "../context/profileContext";
+import displayToast from "../utils/toastHelper";
 
 function Linkform(props) {
   const { register, control, errors, handleLinkDelete } = props;
@@ -81,15 +88,15 @@ function Linkform(props) {
 }
 
 export default function UpdateProfileForm(props) {
-  const { setProfiles, profiles } = useContext(UserContext);
-  const { showToast } = useContext(ToastContext);
+  const { setProfiles, profiles } = useContext(ProfileContext);
+  const toast = useToast();
   const [formValues, setFormValues] = useState({
     name: "",
     about: "",
     sites: [],
   });
-  // const [name, setName] = useState("");
-  // const [about, setAbout] = useState("");
+  const [name, setName] = useState("");
+  const [about, setAbout] = useState("");
   const navigate = useNavigate();
   const params = useParams();
 
@@ -98,12 +105,12 @@ export default function UpdateProfileForm(props) {
     handleSubmit,
     control,
     formState: { errors },
-    getValues
+    getValues,
   } = useForm({
     resolver: yupResolver(newProfileSchema),
     defaultValues: async () => {
       const response = await getSingleProfile(params.id);
-      console.log(response)
+      console.log(response);
       const { name, about, links, _id } = response.data;
       return { name, about, sites: links, profileId: _id };
     },
@@ -113,31 +120,39 @@ export default function UpdateProfileForm(props) {
     try {
       const response = await updateProfile(getValues("profileId"), data);
       console.log("data", data);
-      showToast(response.data.msg, "success");
-      setProfiles([...profiles, response.data.createdProfile]);
-      // navigate("/dashboard");
+      console.log(response);
+      displayToast(toast, response.data.msg, "success");
+      // setProfiles([...profiles, response.data.createdProfile]);
+      setProfiles((prev) =>
+        prev.map((item) =>
+          item._id !== getValues("profileId")
+            ? item
+            : response.data.createdProfile
+        )
+      );
+      navigate("/dashboard");
     } catch (err) {
       console.log(err);
-      showToast(err.response.data.err, "error");
+      displayToast(toast, err.response.data.err, "error");
     }
   };
 
-   const handleLinkDelete = async (item, remove, index) => {
+  const handleLinkDelete = async (item, remove, index) => {
     try {
       if (item._id) {
         await deleteLink(item._id);
       }
-      remove(index)
-      showToast("Link deleted!", "success");
+      remove(index);
+      displayToast(toast, "Link deleted!", "success");
     } catch (err) {
       console.log(err);
-      showToast(err.response.data.err, "error");
+      displayToast(toast, err.response.data.err, "error");
     }
-   }
+  };
 
   return (
     <VStack w="80%" alignItems="stretch" h="100%">
-      <Heading textAlign="center">Create New Profile</Heading>
+      <Heading textAlign="center">Edit Profile</Heading>
       <form onSubmit={handleSubmit(handleProfileSubmit)} w="100%">
         <FormControl isRequired isInvalid={errors.name} mb="0.5rem">
           <FormLabel>Full Name</FormLabel>
@@ -149,7 +164,12 @@ export default function UpdateProfileForm(props) {
           <Input placeholder="Short About" type="text" {...register("about")} />
           <FormErrorMessage>{errors.about?.message}</FormErrorMessage>
         </FormControl>
-        <Linkform register={register} control={control} errors={errors} handleLinkDelete={handleLinkDelete}/>
+        <Linkform
+          register={register}
+          control={control}
+          errors={errors}
+          handleLinkDelete={handleLinkDelete}
+        />
         <Center mt="5rem">
           <Button
             colorScheme="blue"
@@ -161,7 +181,7 @@ export default function UpdateProfileForm(props) {
             Cancel
           </Button>
           <Button variant="solid" type="submit" colorScheme="whatsapp">
-            Create Profile
+            Update Profile
           </Button>
         </Center>
       </form>
