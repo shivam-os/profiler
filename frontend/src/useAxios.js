@@ -18,7 +18,6 @@ export default function useAxios() {
         if (err?.response.status === 401) {
           displayToast(toast, "You are logged out. Log in to access the app.", "error");
           setLoggedIn(false);
-          navigate("/login");
         }
         console.log(err.response);
       }

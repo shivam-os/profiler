@@ -5,5 +5,5 @@ import UserContext from "../context/userContext";
 export default function RequireAuth() {
   const { loggedIn } = useContext(UserContext);
   
-  return loggedIn ? <Outlet /> : <Navigate to="/login" />;
+  return loggedIn === true ? <Outlet /> : <Navigate to="/login" />;
 }

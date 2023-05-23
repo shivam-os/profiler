@@ -9,7 +9,6 @@ import {
   CardHeader,
   CardBody,
   Flex,
-  Avatar,
   Box,
   Heading,
   Text,
@@ -29,11 +28,9 @@ import {
   CalendarIcon,
 } from "@chakra-ui/icons";
 import { useContext, useEffect, useState } from "react";
-import UserContext from "../context/userContext";
 import { deleteProfile } from "../api/profileCalls";
 import { NavLink, useNavigate } from "react-router-dom";
 import { ProfileContext } from "../context/profileContext";
-import api from "../api/serverData";
 import displayToast from "../utils/toastHelper";
 
 function CustomMenuButton(props) {
@@ -55,8 +52,9 @@ function CustomMenuButton(props) {
     </Menu>
   );
 }
+
 function ProfileLink(props) {
-  const { siteName, siteUrl } = props;
+  const { siteName, siteUrl, copyLink } = props;
 
   return (
     <HStack justifyContent="space-between" mb="1rem">
@@ -66,7 +64,11 @@ function ProfileLink(props) {
         </Text>
         <Text>{siteUrl}</Text>
       </Box>
-      <IconButton icon={<CopyIcon />} aria-label="Copy the link" />
+      <IconButton
+        icon={<CopyIcon />}
+        aria-label="Copy the link"
+        onClick={() => copyLink(siteUrl)}
+      />
     </HStack>
   );
 }
@@ -88,12 +90,16 @@ function ProfileCard(props) {
     }
   };
 
+  const copyLink = (link) => {
+    navigator.clipboard.writeText(link);
+    displayToast(toast, "Link copied!", "success");
+  };
+
   return (
     <Card w="100%">
       <CardHeader>
         <Flex spacing="4">
           <Flex flex="1" gap="4" alignItems="center" flexWrap="wrap">
-            {/* <Avatar name="Segun Adebayo" src="https://bit.ly/sage-adebayo" /> */}
             <CalendarIcon />
             <Box>
               <Heading size="sm">{name}</Heading>
@@ -114,6 +120,7 @@ function ProfileCard(props) {
               key={item._id}
               siteName={item.siteName}
               siteUrl={item.siteUrl}
+              copyLink={copyLink}
             />
           );
         })}
@@ -125,11 +132,10 @@ function ProfileCard(props) {
 function ProfileList(props) {
   const { profiles } = useContext(ProfileContext);
   const { searchResults } = props;
-  const list = searchResults === [] ? searchResults : profiles;
-  console.log(list);
+
   return (
     <>
-      {list.map((item) => {
+      {searchResults === [] ? profiles : searchResults.map((item) => {
         return (
           <ProfileCard
             key={item._id}
@@ -149,20 +155,6 @@ export default function Dashboard() {
   const [searchResults, setSearchResults] = useState([]);
   const { profiles } = useContext(ProfileContext);
 
-  // useEffect(() => {
-  //   const fetchAllProfiles = async () => {
-  //     try {
-  //       const response = await api.get("/profiles");
-  //       console.log(response);
-  //       setProfiles(response.data.userProfiles.profiles);
-  //     } catch (err) {
-  //       console.log(err);
-  //     }
-  //   };
-
-  //   fetchAllProfiles();
-  // }, []);
-
   const handleSearchBox = (e) => {
     setSearch(e.target.value);
   };
@@ -174,7 +166,7 @@ export default function Dashboard() {
         item.name.toLowerCase().includes(search.trim().toLowerCase())
       )
     );
-  }, [search]);
+  }, [search, profiles]);
 
   return (
     <VStack w="90%" spacing="2rem">

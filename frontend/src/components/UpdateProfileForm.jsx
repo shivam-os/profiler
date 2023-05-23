@@ -15,20 +15,18 @@ import { newProfileSchema } from "../utils/profileValidator";
 import { useFieldArray, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import {
-  createProfile,
   deleteLink,
   getSingleProfile,
   updateProfile,
 } from "../api/profileCalls";
-import { useContext, useEffect, useState } from "react";
-import UserContext from "../context/userContext";
+import { useContext } from "react";
 import { NavLink, useNavigate, useParams } from "react-router-dom";
 import { ProfileContext } from "../context/profileContext";
 import displayToast from "../utils/toastHelper";
 
 function Linkform(props) {
   const { register, control, errors, handleLinkDelete } = props;
-  const { fields, append, remove, replace } = useFieldArray({
+  const { fields, append, remove } = useFieldArray({
     control,
     name: "sites",
   });
@@ -49,7 +47,6 @@ function Linkform(props) {
               placeholder="Site Name"
               type="text"
               {...register(`sites.${index}.siteName`)}
-              // defaultValue={item.siteName}
             />
             <FormErrorMessage>
               {errors.sites?.[index]?.siteName?.message.slice(9)}
@@ -88,15 +85,8 @@ function Linkform(props) {
 }
 
 export default function UpdateProfileForm(props) {
-  const { setProfiles, profiles } = useContext(ProfileContext);
+  const { setProfiles } = useContext(ProfileContext);
   const toast = useToast();
-  const [formValues, setFormValues] = useState({
-    name: "",
-    about: "",
-    sites: [],
-  });
-  const [name, setName] = useState("");
-  const [about, setAbout] = useState("");
   const navigate = useNavigate();
   const params = useParams();
 
@@ -122,7 +112,6 @@ export default function UpdateProfileForm(props) {
       console.log("data", data);
       console.log(response);
       displayToast(toast, response.data.msg, "success");
-      // setProfiles([...profiles, response.data.createdProfile]);
       setProfiles((prev) =>
         prev.map((item) =>
           item._id !== getValues("profileId")

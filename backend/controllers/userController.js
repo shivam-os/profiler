@@ -3,7 +3,12 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
 const httpResponses = require("../utils/httpResponses");
-const tokenValidity = 1 * 60 * 60 * 1000; //1 day
+const tokenValidity = 3 * 60 * 1000; //1 day
+const cookieOptions = {
+  expires: new Date(Date.now() + tokenValidity),
+  httpOnly: true,
+};
+
 const responseObj = "User";
 
 //Check if user with given email already exists
@@ -89,9 +94,7 @@ exports.login = async (req, res) => {
     );
 
     return res
-      .cookie("token", bearerToken, {
-        expires: new Date(Date.now() + tokenValidity),
-      })
+      .cookie("token", bearerToken, cookieOptions)
       .status(200)
       .json({
         token: bearerToken,
@@ -102,4 +105,17 @@ exports.login = async (req, res) => {
     console.log(err);
     return httpResponses.serverError(res);
   }
+};
+
+//GET method to verify if user is logged in
+exports.verify = async (req, res) => {
+  return res.status(200).json({ msg: "You are currently logged in!" });
+};
+
+//POST method to logout the existing user
+exports.logout = (req, res) => {
+  return res
+    .status(201)
+    .clearCookie("token", req.cookies.token, cookieOptions)
+    .json({ msg: `You are logged out! We hope to see you soon.` });
 };
