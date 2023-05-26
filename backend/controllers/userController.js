@@ -5,7 +5,7 @@ require("dotenv").config();
 const httpResponses = require("../utils/httpResponses");
 const tokenValidity = 3 * 60 * 1000; //1 day
 const cookieOptions = {
-  expires: new Date(Date.now() + tokenValidity),
+  maxAge: tokenValidity,
   httpOnly: true,
 };
 
@@ -64,7 +64,7 @@ exports.login = async (req, res) => {
   }
   try {
     const { email, password } = req.body;
-    const existingUser = await ifUserExists(email);
+    const existingUser = await User.findOne({email});
 
     //Check if email with given user exists
     if (!existingUser) {

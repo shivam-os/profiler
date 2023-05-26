@@ -81,12 +81,10 @@ function ProfileCard(props) {
 
   const handleDelete = async (id) => {
     try {
-      const response = await deleteProfile(id);
-      displayToast(toast, response.data.msg, "success");
+      await deleteProfile(id);
       setProfiles(profiles.filter((item) => item._id !== id));
     } catch (err) {
       console.log(err);
-      displayToast(toast, err.response.data.err, "error");
     }
   };
 

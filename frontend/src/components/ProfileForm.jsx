@@ -9,7 +9,6 @@ import {
   Heading,
   Text,
   Center,
-  useToast
 } from "@chakra-ui/react";
 import { newProfileSchema } from "../utils/profileValidator";
 import { useFieldArray, useForm } from "react-hook-form";
@@ -18,8 +17,8 @@ import { createProfile } from "../api/profileCalls";
 import { useContext } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { ProfileContext } from "../context/profileContext";
-import displayToast from "../utils/toastHelper";
 
+//Component for adding links
 function Linkform(props) {
   const { register, control, errors } = props;
   const { fields, append, remove } = useFieldArray({
@@ -29,17 +28,25 @@ function Linkform(props) {
 
   return (
     <Box w="100%">
-      <Text fontWeight="semibold" mb="1rem">Links:</Text>
+      <Text fontWeight="semibold" mb="1rem">
+        Links:
+      </Text>
       {fields.map((item, index) => (
         <Box key={item.id} w="100%">
-          <FormControl isRequired isInvalid={errors.sites?.[index]?.siteName} mb="0.5rem">
+          <FormControl
+            isRequired
+            isInvalid={errors.sites?.[index]?.siteName}
+            mb="0.5rem"
+          >
             <Input
               placeholder="Site Name"
               type="text"
               {...register(`sites.${index}.siteName`)}
               defaultValue={item.siteName}
             />
-            <FormErrorMessage>{errors.sites?.[index]?.siteName?.message.slice(9)}</FormErrorMessage>
+            <FormErrorMessage>
+              {errors.sites?.[index]?.siteName?.message.slice(9)}
+            </FormErrorMessage>
           </FormControl>
           <FormControl isRequired isInvalid={errors.sites?.[index]?.siteUrl}>
             <Input
@@ -48,7 +55,9 @@ function Linkform(props) {
               {...register(`sites.${index}.siteUrl`)}
               defaultValue={item.siteUrl}
             />
-            <FormErrorMessage>{errors.sites?.[index]?.siteUrl?.message.slice(9)}</FormErrorMessage>
+            <FormErrorMessage>
+              {errors.sites?.[index]?.siteUrl?.message.slice(9)}
+            </FormErrorMessage>
           </FormControl>
           <Button
             colorScheme="red"
@@ -71,10 +80,9 @@ function Linkform(props) {
   );
 }
 
-export default function ProfileForm(props) {
+export default function ProfileForm() {
   const { setProfiles, profiles } = useContext(ProfileContext);
-  const toast = useToast();
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const {
     register,
@@ -86,15 +94,11 @@ export default function ProfileForm(props) {
   const handleProfileSubmit = async (data) => {
     try {
       const response = await createProfile(data);
-      console.log("data", data);
-      console.log(response)
-      displayToast(toast, response.data.msg, "success")
-      // showToast();
-      setProfiles([...profiles, response.data.createdProfile]);
-      navigate("/dashboard")
+      setProfiles([response.data.createdProfile, ...profiles]);
+      console.log("hel");
+      navigate("/dashboard");
     } catch (err) {
       console.log(err);
-      displayToast(toast, err.response.data.err, "error");
     }
   };
 
@@ -114,18 +118,18 @@ export default function ProfileForm(props) {
         </FormControl>
         <Linkform register={register} control={control} errors={errors} />
         <Center mt="5rem">
-        <Button
-          colorScheme="blue"
-          variant="outline"
-          mr={3}
-          as={NavLink}
-          to="/dashboard"
-        >
-          Cancel
-        </Button>
-        <Button variant="solid" type="submit" colorScheme="whatsapp">
-          Create Profile
-        </Button>
+          <Button
+            colorScheme="blue"
+            variant="outline"
+            mr={3}
+            as={NavLink}
+            to="/dashboard"
+          >
+            Cancel
+          </Button>
+          <Button variant="solid" type="submit" colorScheme="whatsapp">
+            Create Profile
+          </Button>
         </Center>
       </form>
     </VStack>

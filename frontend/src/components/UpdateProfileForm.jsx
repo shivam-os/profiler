@@ -9,7 +9,6 @@ import {
   Heading,
   Text,
   Center,
-  useToast,
 } from "@chakra-ui/react";
 import { newProfileSchema } from "../utils/profileValidator";
 import { useFieldArray, useForm } from "react-hook-form";
@@ -22,7 +21,6 @@ import {
 import { useContext } from "react";
 import { NavLink, useNavigate, useParams } from "react-router-dom";
 import { ProfileContext } from "../context/profileContext";
-import displayToast from "../utils/toastHelper";
 
 function Linkform(props) {
   const { register, control, errors, handleLinkDelete } = props;
@@ -86,7 +84,6 @@ function Linkform(props) {
 
 export default function UpdateProfileForm(props) {
   const { setProfiles } = useContext(ProfileContext);
-  const toast = useToast();
   const navigate = useNavigate();
   const params = useParams();
 
@@ -100,7 +97,6 @@ export default function UpdateProfileForm(props) {
     resolver: yupResolver(newProfileSchema),
     defaultValues: async () => {
       const response = await getSingleProfile(params.id);
-      console.log(response);
       const { name, about, links, _id } = response.data;
       return { name, about, sites: links, profileId: _id };
     },
@@ -109,9 +105,6 @@ export default function UpdateProfileForm(props) {
   const handleProfileSubmit = async (data) => {
     try {
       const response = await updateProfile(getValues("profileId"), data);
-      console.log("data", data);
-      console.log(response);
-      displayToast(toast, response.data.msg, "success");
       setProfiles((prev) =>
         prev.map((item) =>
           item._id !== getValues("profileId")
@@ -122,7 +115,6 @@ export default function UpdateProfileForm(props) {
       navigate("/dashboard");
     } catch (err) {
       console.log(err);
-      displayToast(toast, err.response.data.err, "error");
     }
   };
 
@@ -132,10 +124,8 @@ export default function UpdateProfileForm(props) {
         await deleteLink(item._id);
       }
       remove(index);
-      displayToast(toast, "Link deleted!", "success");
     } catch (err) {
       console.log(err);
-      displayToast(toast, err.response.data.err, "error");
     }
   };
 

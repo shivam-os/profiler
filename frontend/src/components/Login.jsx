@@ -7,7 +7,6 @@ import {
   Input,
   Button,
   FormErrorMessage,
-  useToast,
 } from "@chakra-ui/react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -17,13 +16,10 @@ import { useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { loginUser } from "../api/authCalls";
 import UserContext from "../context/userContext";
-import displayToast from "../utils/toastHelper";
 
 export default function Login() {
   const { setLoggedIn } = useContext(UserContext);
-  const toast = useToast();
   const navigate = useNavigate();
-
   const {
     register,
     handleSubmit,
@@ -32,13 +28,11 @@ export default function Login() {
 
   const handleLoginSubmit = async (data) => {
     try {
-      const response = await loginUser(data);
-      displayToast(toast, response.data.msg, "success");
+      await loginUser(data);
       setLoggedIn(true);
       navigate("/dashboard");
     } catch (err) {
       console.log(err);
-      displayToast(toast, err.response.data.err, "error");
     }
   };
 

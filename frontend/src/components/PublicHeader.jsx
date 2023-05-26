@@ -3,24 +3,20 @@ import { useContext } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import UserContext from "../context/userContext";
 import { logoutUser } from "../api/authCalls";
-import displayToast from "../utils/toastHelper";
 
 export default function PublicHeader() {
   const { loggedIn, setLoggedIn } = useContext(UserContext);
-  const toast = useToast();
   const navigate = useNavigate();
 
   const home = loggedIn ? "/dashboard" : "/";
 
   const handleLogout = async () => {
     try {
-      const response = await logoutUser();
+      await logoutUser();
       setLoggedIn(false)
-      displayToast(toast, response.data.msg, "success");
       navigate("/login");
     } catch (err) {
       console.log(err);
-      displayToast(toast, err.response.data.err);
     }
   }
 

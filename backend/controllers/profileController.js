@@ -172,7 +172,7 @@ exports.deleteProfileLink = async (req, res) => {
       return httpResponses.notFoundError(res, "Link");
     }
 
-    return httpResponses.deletedResponse(res, "Link");
+    return res.status(200).json({msg: "Link deleted!"})
   } catch (err) {
     console.log(err);
     return httpResponses.serverError(res);

@@ -14,6 +14,6 @@ router.post("/login", userValidator.login, userController.login);
 router.post("/logout", userController.logout);
 
 //GET request to verify a user
-// router.get("/verify", passport.authenticate("jwt", { session: false }), userController.verify)
+router.get("/verify", passport.authenticate("jwt", { session: false }), userController.verify)
 
 module.exports = router;
