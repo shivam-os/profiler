@@ -17,7 +17,7 @@ exports.createLink = [
     .not()
     .isEmpty()
     .withMessage("About field cannot be empty!")
-    .isLength({ min: 3, max: 100 })
+    .isLength({ min: 3, max: 500 })
     .withMessage(
       "Site link must contain minimum 3 letters and maximum 100 letters!"
     )

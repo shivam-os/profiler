@@ -25,6 +25,10 @@ export default function Login() {
     handleSubmit,
     formState: { errors },
   } = useForm({ resolver: yupResolver(userLoginSchema) });
+  const demoUser = {
+    email: "shivam@test.com",
+    password: "Shiv@M89?@why"
+  }
 
   const handleLoginSubmit = async (data) => {
     try {
@@ -37,7 +41,7 @@ export default function Login() {
   };
 
   return (
-    <VStack spacing="2rem" p="3rem" boxShadow="lg" maxWidth="70%" m="auto">
+    <VStack spacing="2rem" p="3rem" boxShadow="lg" maxWidth="70%" m="auto" mt="8rem">
       <Heading>Login</Heading>
       <Text>
         New here?{" "}
@@ -67,6 +71,7 @@ export default function Login() {
         <Button colorScheme="facebook" type="submit" w="100%" mt="1rem">
           Login
         </Button>
+        <Button w="100%" colorScheme="orange" mt="2rem" onClick={()=>handleLoginSubmit(demoUser)}>Guest Login</Button>
       </form>
     </VStack>
   );

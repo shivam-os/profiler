@@ -62,7 +62,7 @@ function ProfileLink(props) {
         <Text fontSize="xl" fontWeight="medium">
           {siteName}
         </Text>
-        <Text>{siteUrl}</Text>
+        <Text>{siteUrl.length >= 50 ? siteUrl.slice(0, 50) + "..." : siteUrl}</Text>
       </Box>
       <IconButton
         icon={<CopyIcon />}
@@ -167,7 +167,7 @@ export default function Dashboard() {
   }, [search, profiles]);
 
   return (
-    <VStack w="90%" spacing="2rem">
+    <VStack w="90%" spacing="2rem" mb="1rem">
       <InputGroup>
         <InputLeftElement
           pointerEvents="none"
@@ -192,6 +192,7 @@ export default function Dashboard() {
         Add New Profile
       </Button>
       <ProfileList searchResults={searchResults} />
+      <Divider />
     </VStack>
   );
 }

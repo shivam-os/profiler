@@ -12,8 +12,8 @@ import { NavLink } from "react-router-dom";
 
 export default function Home() {
   return (
-    <VStack px="5" w="100%" spacing="5">
-      <Text fontWeight="600" fontSize="2xl">
+    <VStack px="5" w="100%" spacing="5" mt="8rem">
+      <Text fontWeight="600" fontSize="2xl" textAlign="center">
         Track your favorite online profiles with
       </Text>
       <Heading

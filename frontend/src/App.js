@@ -4,10 +4,13 @@ import { useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import UserContext from "./context/userContext";
 import { verifyUser } from "./api/authCalls";
+import LoadingContext from "./context/loadingContext";
+import CustomLoader from "./components/CustomLoader";
 
 function App() {
   const navigate = useNavigate();
   const { setLoggedIn } = useContext(UserContext);
+  const { isLoading } = useContext(LoadingContext);
 
   //Verify if the user is logged in
   useEffect(() => {
@@ -27,6 +30,7 @@ function App() {
 
   return (
     <Box maxWidth={{ base: "100%", "2xl": "80%" }} m="auto">
+      {isLoading ? <CustomLoader /> : null}
       <AppRoutes />
     </Box>
   );

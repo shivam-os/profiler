@@ -9,7 +9,7 @@ export const newProfileSchema = yup
       yup.object().shape({
         id: yup.string().trim(),
         siteName: yup.string().trim().min(3).max(100).required(),
-        siteUrl: yup.string().trim().min(3).max(100).url().required(),
+        siteUrl: yup.string().trim().min(3).max(500).url().required(),
       })
     ),
   })

@@ -1,4 +1,4 @@
-import { Button, HStack, Heading, Link, useToast } from "@chakra-ui/react";
+import { Button, HStack, Heading, Link } from "@chakra-ui/react";
 import { useContext } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import UserContext from "../context/userContext";
@@ -21,7 +21,7 @@ export default function PublicHeader() {
   }
 
   return (
-    <HStack w="100%" justifyContent="space-between" p="1rem" mb="10rem">
+    <HStack w="100%" justifyContent="space-between" p="1rem" mb="1rem">
       <Heading as={NavLink} to={`${home}`}>
         Profiler
       </Heading>

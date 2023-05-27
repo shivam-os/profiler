@@ -15,6 +15,7 @@ exports.getAllProfiles = async (req, res) => {
       .populate({
         path: "profiles",
         populate: { path: "links" },
+        options: {sort: {"_id": -1}}
       });
 
     //If no profiles found
