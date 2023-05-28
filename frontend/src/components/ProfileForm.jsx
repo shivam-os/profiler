@@ -94,9 +94,7 @@ export default function ProfileForm() {
   const handleProfileSubmit = async (data) => {
     try {
       const response = await createProfile(data);
-      console.log(data)
       setProfiles([response.data.createdProfile, ...profiles]);
-      console.log("hel");
       navigate("/dashboard");
     } catch (err) {
       console.log(err);

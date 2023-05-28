@@ -27,7 +27,6 @@ export default function AxiosInterceptor({ children }) {
         if (response?.data?.msg) {
           displayToast(toast, response?.data.msg, "success");
         }
-        console.log("ran");
         return response;
       },
 
