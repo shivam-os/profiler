@@ -44,7 +44,6 @@ export default function AxiosInterceptor({ children }) {
         } else {
           displayToast(toast, err?.data?.err, "error");
         }
-        console.log("useAxios");
         return Promise.reject(error);
       }
     );

@@ -9,7 +9,7 @@ const cookieOptions = {
   httpOnly: true,
   secure: true,
   sameSite: "none",
-  domain: "onrender.com"
+  domain: ".onrender.com"
 };
 
 const responseObj = "User";

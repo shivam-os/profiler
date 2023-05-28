@@ -12,7 +12,6 @@ export default function DashboardLayout() {
   useEffect(() => {
     const fetchAllProfiles = async () => {
       try {
-        console.log("fetchprofilie")
         const response = await getAllProfiles()
         const userProfiles = await response.data.userProfiles.profiles;
         setProfiles(userProfiles);

@@ -158,7 +158,6 @@ export default function Dashboard() {
   };
 
   useEffect(() => {
-    console.log(search);
     setSearchResults(
       profiles.filter((item) =>
         item.name.toLowerCase().includes(search.trim().toLowerCase())
