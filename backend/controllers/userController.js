@@ -3,26 +3,13 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
 const httpResponses = require("../utils/httpResponses");
-const tokenValidity = 3 * 60 * 1000; //1 day
+const tokenValidity = 24 * 60 * 60 * 1000; //1 day
 const cookieOptions = {
   maxAge: tokenValidity,
   httpOnly: true,
 };
 
 const responseObj = "User";
-
-//Check if user with given email already exists
-const ifUserExists = async (email) => {
-  try {
-    const existingUser = User.findOne({ email: email });
-    if (existingUser) {
-      return existingUser;
-    }
-  } catch (err) {
-    console.log(err);
-  }
-  return null;
-};
 
 //POST method to register a new user
 exports.register = async (req, res) => {
@@ -35,7 +22,7 @@ exports.register = async (req, res) => {
     const { name, email, password } = req.body;
 
     //Check if user with given email already exists
-    if (await ifUserExists(email)) {
+    if (await User.findOne({ email })) {
       return httpResponses.existsError(res, responseObj);
     }
 
@@ -64,7 +51,7 @@ exports.login = async (req, res) => {
   }
   try {
     const { email, password } = req.body;
-    const existingUser = await User.findOne({email});
+    const existingUser = await User.findOne({ email });
 
     //Check if email with given user exists
     if (!existingUser) {

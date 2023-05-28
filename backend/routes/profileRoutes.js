@@ -2,7 +2,6 @@ const express = require("express");
 const router = express.Router();
 const profileController = require("../controllers/profileController");
 const profileValidator = require("../utils/validators/profileValidator");
-const linkValidator = require("../utils/validators/linkValidator");
 const passport = require("passport");
 
 //GET request to get all profiles created by a user

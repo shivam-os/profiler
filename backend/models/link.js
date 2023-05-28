@@ -6,6 +6,7 @@ const LinkSchema = new Schema({
     type: String,
     required: true,
   },
+
   siteUrl: {
     type: String,
     required: true,

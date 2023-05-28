@@ -66,7 +66,7 @@ exports.createProfile = async (req, res) => {
     req.user.save();
 
     //Create the links
-    for (let i = 0; i < sites.length; i++) {
+    for (let i = 0; i < sites?.length; i++) {
       const createdLink = await Link.create({
         siteName: sites[i].siteName,
         siteUrl: sites[i].siteUrl,

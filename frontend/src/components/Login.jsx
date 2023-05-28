@@ -52,7 +52,7 @@ export default function Login() {
       <form onSubmit={handleSubmit(handleLoginSubmit)}>
         <FormControl isRequired className="form-items" isInvalid={errors.email}>
           <FormLabel>Email</FormLabel>
-          <Input placeholder="Email" {...register("email")} type="email" />
+          <Input placeholder="Email" {...register("email")} type="email"/>
           <FormErrorMessage>{errors.email?.message}</FormErrorMessage>
         </FormControl>
         <FormControl
