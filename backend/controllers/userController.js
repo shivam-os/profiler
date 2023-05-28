@@ -7,6 +7,9 @@ const tokenValidity = 24 * 60 * 60 * 1000; //1 day
 const cookieOptions = {
   maxAge: tokenValidity,
   httpOnly: true,
+  secure: true,
+  sameSite: "none",
+  domain: "onrender.com"
 };
 
 const responseObj = "User";
