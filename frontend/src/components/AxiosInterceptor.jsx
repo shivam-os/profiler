@@ -53,6 +53,7 @@ export default function AxiosInterceptor({ children }) {
       api.interceptors.request.eject(requestInterceptor);
       api.interceptors.response.eject(responseInterceptor);
     };
+    // eslint-disable-next-line
   }, [setLoggedIn, toast, setIsLoading]);
 
   return children;

@@ -26,6 +26,7 @@ function App() {
       }
     };
     checkUser();
+    // eslint-disable-next-line
   }, [setLoggedIn]);
 
   return (
