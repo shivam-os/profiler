@@ -9,7 +9,7 @@ const cookieOptions = {
   httpOnly: true,
   secure: true,
   sameSite: "none",
-  domain: ".onrender.com"
+  domain: ".shivam-os.com"
 };
 
 const responseObj = "User";
