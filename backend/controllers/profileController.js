@@ -124,10 +124,11 @@ exports.updateProfile = async (req, res) => {
       }
     }
 
-    existingProfile.save();
+    await existingProfile.save();
+    const updatedProfile = await Profile.findById(req.params.id).populate("links")
 
     return res.json({
-      createdProfile: await existingProfile.populate("links"),
+      createdProfile: updatedProfile,
       msg: "Profile updated successfully!",
     });
   } catch (err) {
