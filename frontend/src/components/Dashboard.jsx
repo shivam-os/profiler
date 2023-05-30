@@ -8,7 +8,6 @@ import {
   Card,
   CardHeader,
   CardBody,
-  Flex,
   Box,
   Heading,
   Text,
@@ -58,11 +57,13 @@ function ProfileLink(props) {
 
   return (
     <HStack justifyContent="space-between" mb="1rem">
-      <Box>
+      <Box mr="0.25rem">
         <Text fontSize="xl" fontWeight="medium">
           {siteName}
         </Text>
-        <Text>{siteUrl.length >= 50 ? siteUrl.slice(0, 50) + "..." : siteUrl}</Text>
+        <Text textOverflow="ellipsis">
+          {siteUrl.length >= 50 ? siteUrl.slice(0, 50) + "..." : siteUrl}
+        </Text>
       </Box>
       <IconButton
         icon={<CopyIcon />}
@@ -94,21 +95,27 @@ function ProfileCard(props) {
   };
 
   return (
-    <Card w="100%">
+    <Card w="100%" wordBreak="break-word">
       <CardHeader>
-        <Flex spacing="4">
-          <Flex flex="1" gap="4" alignItems="center" flexWrap="wrap">
+        <HStack
+          gap="4"
+          alignItems="center"
+          justifyContent="space-between"
+          w="100%"
+        >
+          <HStack gap="0.5rem">
             <CalendarIcon />
             <Box>
               <Heading size="sm">{name}</Heading>
               <Text>{about}</Text>
             </Box>
-          </Flex>
+          </HStack>
+
           <CustomMenuButton
             handleDelete={() => handleDelete(id)}
             handleEdit={() => navigate(`/dashboard/profile/${id}`)}
           />
-        </Flex>
+        </HStack>
       </CardHeader>
       <Divider />
       <CardBody>
@@ -133,17 +140,19 @@ function ProfileList(props) {
 
   return (
     <>
-      {searchResults === [] ? profiles : searchResults.map((item) => {
-        return (
-          <ProfileCard
-            key={item._id}
-            name={item.name}
-            about={item.about}
-            links={item.links}
-            id={item._id}
-          />
-        );
-      })}
+      {searchResults === []
+        ? profiles
+        : searchResults.map((item) => {
+            return (
+              <ProfileCard
+                key={item._id}
+                name={item.name}
+                about={item.about}
+                links={item.links}
+                id={item._id}
+              />
+            );
+          })}
     </>
   );
 }

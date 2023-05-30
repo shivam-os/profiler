@@ -44,7 +44,10 @@ export default function AxiosInterceptor({ children }) {
         } else {
           displayToast(toast, err?.data?.err, "error");
         }
-        return Promise.reject(error);
+        return Promise.reject({
+          err: error.response.data.err,
+          status: error.response.status,
+        });
       }
     );
 
